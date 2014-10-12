@@ -25,11 +25,15 @@
                 dataType: 'json',
                 _success: function(data){
                     var gid = $(_el).data('grid-id');
+                    if(data.message){
+                        $.fn.grid.selectColumn.alert(data.message);
+                    }
                     $.fn.yiiGridView.update(gid);
                 }
             });
             
         });
     };
+    $.fn.grid.selectColumn.alert=alert;
     
 })(jQuery);

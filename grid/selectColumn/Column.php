@@ -19,6 +19,7 @@ class Column extends \CDataColumn{
     public $list;
     public $requestData;
     public $method='post';
+    public $visible=true;
     
     public $selector ='select-column';
     
@@ -26,16 +27,18 @@ class Column extends \CDataColumn{
     
 
     protected function renderDataCellContent($row,$data){
-        $opts = \CMap::mergeArray($this->htmlOptions, array(
-            'data-name' =>  $this->nameValue,
-            'data-type' => $this->selector,
-            'data-url' => $this->getUpdateUrl($row, $data),
-            'data-request' => json_encode( $this->getRequestData($row,$data) ),
-            'data-grid-id' => $this->grid->getId(),
-            'data-method' => $this->method,
-            'empty' => '--  --'
-        ));
-        echo \CHtml::dropDownList('', $this->getSelectedValue($row, $data), $this->list, $opts);
+        if($this->getVisible($row, $data)){
+            $opts = \CMap::mergeArray($this->htmlOptions, array(
+                'data-name' =>  $this->nameValue,
+                'data-type' => $this->selector,
+                'data-url' => $this->getUpdateUrl($row, $data),
+                'data-request' => json_encode( $this->getRequestData($row,$data) ),
+                'data-grid-id' => $this->grid->getId(),
+                'data-method' => $this->method,
+                'empty' => '--  --'
+            ));
+            echo \CHtml::dropDownList('', $this->getSelectedValue($row, $data), $this->list, $opts);
+        }
         
         //register script
         $this->registerScript();
@@ -77,6 +80,13 @@ class Column extends \CDataColumn{
             $_data=$this->evaluateExpression($this->requestData,array('data'=>$data,'row'=>$row));
         }
         return $_data;
+    }
+    
+    protected function getVisible($row,$data){
+        if($this->visible !== null){
+            return $this->evaluateExpression($this->visible,array('data'=>$data,'row'=>$row));
+        }
+        return $this->visible;
     }
     
     
